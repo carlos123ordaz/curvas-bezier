@@ -74,8 +74,8 @@ function App() {
 
       <div className="body">
         {mode === "edu"
-          ? <EducativeMode tw={twFull} grid={grid} setGrid={setGrid} persistKey="bz.edu" />
-          : <EditorMode tw={twFull} grid={grid} setGrid={setGrid} persistKey="bz.editor" />}
+          ? <EducativeMode tw={twFull} grid={grid} setGrid={setGrid} persistKey="bzapp.edu" />
+          : <EditorMode tw={twFull} grid={grid} setGrid={setGrid} persistKey="bzapp.editor" />}
       </div>
 
       <TweaksPanel>

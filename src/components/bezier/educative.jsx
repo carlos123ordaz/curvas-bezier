@@ -287,14 +287,32 @@ function EducativeMode({ tw, grid, setGrid, persistKey }) {
       >
         <div className="hud tl">
           <Icon name="vector" size={14} style={{ color: "var(--curve)" }} />
-          <span>Bézier&nbsp;<b>n={points.length - 1}</b></span>
+          {points.length >= 2
+            ? <span>Bézier&nbsp;<b>n={points.length - 1}</b></span>
+            : <span style={{ color: "var(--muted)" }}>sin curva</span>}
         </div>
+        {points.length === 0 && (
+          <div style={{
+            position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", pointerEvents: "none",
+            gap: 10,
+          }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.18 }}>
+              <path d="M3 19C3 9 21 15 21 5" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round"/>
+              <circle cx="3" cy="19" r="2.5" fill="var(--ink)"/>
+              <circle cx="21" cy="5" r="2.5" fill="var(--ink)"/>
+            </svg>
+            <span style={{ fontSize: 13, color: "var(--faint)", fontFamily: "var(--font-ui)", textAlign: "center", lineHeight: 1.5 }}>
+              Haz clic en el lienzo<br/>para añadir puntos de control
+            </span>
+          </div>
+        )}
         <ZoomControls view={view} onView={setView} zoomAt={zoomAt} onFit={fit} base={EDU_BASE} />
       </CanvasStage>
 
       <div className="panel right">
         <div className="panel-scroll">
-          <FormulaPanel points={points} t={t} ct={ct} />
+          <FormulaPanel points={points} t={t} ct={ct ?? { x: 0, y: 0 }} />
         </div>
       </div>
     </>
@@ -302,6 +320,15 @@ function EducativeMode({ tw, grid, setGrid, persistKey }) {
 }
 
 function FormulaPanel({ points, t, ct }) {
+  if (points.length < 2) {
+    return (
+      <div className="section">
+        <div className="empty">
+          Añade al menos<br /><b>2 puntos de control</b><br />para ver la fórmula.
+        </div>
+      </div>
+    );
+  }
   const n = points.length - 1;
   const weights = points.map((_, i) => Bz.bernstein(i, n, t));
   const isCubic = n === 3;
