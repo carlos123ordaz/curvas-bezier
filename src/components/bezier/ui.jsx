@@ -116,14 +116,16 @@ function useHistory(initial) {
   };
 }
 
-function ZoomControls({ view, onView, zoomAt, onFit, base = 1 }) {
+function ZoomControls({ view, onView, zoomAt, onFit, base = 1, stageSize }) {
   const pct = Math.round(view.scale / base * 100);
+  const cx = stageSize ? stageSize.w / 2 : 0;
+  const cy = stageSize ? stageSize.h / 2 : 0;
   return (
     <div className="hud br" style={{ padding: 3 }}>
       <div className="zoomctl">
-        <button title="Alejar" onClick={() => zoomAt(1 / 1.25, 0, 0)}><Icon name="minus" size={15} /></button>
+        <button title="Alejar" onClick={() => zoomAt(1 / 1.25, cx, cy)}><Icon name="minus" size={15} /></button>
         <span className="val">{pct}%</span>
-        <button title="Acercar" onClick={() => zoomAt(1.25, 0, 0)}><Icon name="plus" size={15} /></button>
+        <button title="Acercar" onClick={() => zoomAt(1.25, cx, cy)}><Icon name="plus" size={15} /></button>
         <button title="Ajustar (⇧1)" onClick={onFit}><Icon name="fit" size={15} /></button>
       </div>
     </div>

@@ -45,7 +45,7 @@ function bbox(paths) {
 }
 
 function EditorMode({ tw, grid, setGrid, persistKey }) {
-  const hist = useHistory(sampleDoc());
+  const hist = useHistory({ paths: [] });
   const doc = hist.present;
   const [tool, setTool] = useState("pen");
   const [sel, setSel] = useState({ pathId: doc.paths[0]?.id || null, ai: null });
@@ -64,7 +64,18 @@ function EditorMode({ tw, grid, setGrid, persistKey }) {
   }, []);
   useEffect(() => { const id = setTimeout(() => { try { localStorage.setItem(persistKey, JSON.stringify(doc)); } catch (e) {} }, 200); return () => clearTimeout(id); }, [doc]);
 
-  useEffect(() => { if (!fitted.current && size.w) { const v = fitToPoints(doc.paths.flatMap((p) => p.anchors), size.w, size.h, 140, 2.2); if (v) setView(v); fitted.current = true; } }, [size]);
+  useEffect(() => {
+    if (!fitted.current && size.w) {
+      fitted.current = true;
+      const anchors = doc.paths.flatMap((p) => p.anchors);
+      if (anchors.length) {
+        const v = fitToPoints(anchors, size.w, size.h, 140, 2.2);
+        if (v) setView(v);
+      } else {
+        setView({ scale: 1, ox: size.w / 2, oy: size.h / 2 });
+      }
+    }
+  }, [size]);
 
   const snap = (p) => grid.snap ? { x: Math.round(p.x / EDITOR_GRID) * EDITOR_GRID, y: Math.round(p.y / EDITOR_GRID) * EDITOR_GRID } : { x: Bz.round(p.x, 1), y: Bz.round(p.y, 1) };
   const w2sV = (p) => ({ x: p.x * view.scale + view.ox, y: p.y * view.scale + view.oy });
@@ -414,7 +425,7 @@ function EditorMode({ tw, grid, setGrid, persistKey }) {
             x <b>{Math.round(cursorWorld.x)}</b>&nbsp;&nbsp;y <b>{Math.round(cursorWorld.y)}</b>
           </div>
         )}
-        <ZoomControls view={view} onView={setView} zoomAt={zoomAt} onFit={fit} base={1} />
+        <ZoomControls view={view} onView={setView} zoomAt={zoomAt} onFit={fit} base={1} stageSize={size} />
         {tool === "pen" && (
           <div className="hud" style={{ top: 12, left: "50%", transform: "translateX(-50%)", fontFamily: "var(--font-ui)" }}>
             <span className="hint" style={{ fontSize: 11.5 }}><span className="pen">Clic</span> punto · <span className="pen">Arrastra</span> curva · clic en P0 para cerrar</span>

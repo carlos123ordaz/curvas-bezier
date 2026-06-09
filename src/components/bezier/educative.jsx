@@ -307,7 +307,7 @@ function EducativeMode({ tw, grid, setGrid, persistKey }) {
             </span>
           </div>
         )}
-        <ZoomControls view={view} onView={setView} zoomAt={zoomAt} onFit={fit} base={EDU_BASE} />
+        <ZoomControls view={view} onView={setView} zoomAt={zoomAt} onFit={fit} base={EDU_BASE} stageSize={size} />
       </CanvasStage>
 
       <div className="panel right">
